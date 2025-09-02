@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Карго - Илгээмж шалгах & Админ</title>
+<style>
+:root{--bg:#0f1226;--panel:#161a35;--soft:#202553;--text:#eef1ff;--muted:#b9c3ff;--accent1:#6e8bff;--accent2:#ff6ad5;--radius:12px;}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,sans-serif;background:linear-gradient(180deg,#0f1226 0%,#071028 100%);color:var(--text);-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+header{background:linear-gradient(90deg,var(--accent1),var(--accent2));padding:18px 24px;box-shadow:0 6px 24px rgba(0,0,0,0.45)}
+.container{max-width:1200px;margin:20px auto;padding:18px}
+.brand{display:flex;align-items:center;gap:12px;font-weight:700}
+.logo{width:44px;height:44px;border-radius:10px;background:conic-gradient(from 180deg,var(--accent2),var(--accent1));box-shadow:0 6px 18px rgba(110,139,255,0.12)}
+nav{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap}
+.tab{background:rgba(255,255,255,0.03);padding:8px 12px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);cursor:pointer}
+.tab.active{background:linear-gradient(90deg,var(--accent1),var(--accent2));color:#041428;font-weight:700}
+main{display:grid;grid-template-columns:1fr;gap:18px;margin-top:18px}
+.card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border:1px solid rgba(255,255,255,0.04);padding:18px;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,0.4)}
+h1,h2{margin:0 0 10px 0}
+.lead{color:var(--muted);margin-bottom:12px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.grow{flex:1 1 220px}
+input, select, textarea{width:100%;padding:10px 12px;border-radius:10px;border:1px solid rgba(255,255,255,0.06);background:#0b1230;color:var(--text);outline:none}
+input::placeholder{color:#93a0ff55}
+button{padding:10px 14px;border-radius:10px;border:none;cursor:pointer;background:var(--panel);color:var(--text);box-shadow:0 8px 20px rgba(0,0,0,0.45)}
+button.primary{background:linear-gradient(90deg,var(--accent1),var(--accent2));color:#041428;font-weight:700}
+table{width:100%;border-collapse:collapse;margin-top:12px;border-radius:10px;overflow:hidden}
+th,td{padding:10px 12px;text-align:left;border-bottom:1px dashed rgba(255,255,255,0.04)}
+th{background:rgba(255,255,255,0.03);font-weight:700}
+.muted{color:var(--muted)}
+.small{font-size:13px}
+.hidden{display:none}
+.clickable-row{cursor:pointer}
+.collapse-content{display:none;padding-top:8px}
+footer{margin-top:20px;color:var(--muted);text-align:center;padding:18px 4px}
+@media(min-width:900px){main{grid-template-columns:1fr 1fr}}
+.collapsible-btn {
+  width: 100%;
+  text-align: left;
+  background: linear-gradient(90deg,#6e8bff,#ff6ad5);
+  color: #041428;
+  padding: 12px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.collapsible-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.35s ease;
+  padding: 0 12px;
+  background: rgba(255,255,255,0.02);
+  border-radius: 0 0 10px 10px;
+  margin-bottom: 12px;
+}
+
+.collapsible-content p, .collapsible-content ul {
+  margin: 8px 0;
+  color: #b9c3ff;
+}
+
+</style>
+</head>
+<body>
+<header>
+<div class="container">
+<div class="brand">
+<div class="logo" aria-hidden="true"></div>
+<div><div style="font-size:18px">Эрхэс Карго</div><div class="small muted">Илгээмж шалгах · Админ (Local demo)</div></div>
+</div>
+<nav style="margin-top:12px">
+<button id="tabUser" class="tab active">Хэрэглэгч</button>
+<button id="tabAdmin" class="tab">Админ</button>
+</nav>
+</div>
+</header>
+<main class="container">
+<!-- USER -->
+<section id="userPanel" class="card">
+<h2>📦 Илгээмж шалгах</h2>
+<p class="lead">Утасны дугаараа оруулаад тухайн дугаарт бүртгэлтэй илгээмжүүдийг хараарай.</p>
+<div class="row" style="margin-top:8px">
+<input id="uPhone" class="grow" placeholder="Утасны дугаар (ж: 99112233)" inputmode="numeric"/>
+<button id="uSearchBtn" class="primary">Шалгах</button>
+</div>
+<div id="userSummary" style="margin-top:12px"></div>
+<div id="userResults" style="margin-top:12px"></div>
+
+<!-- Collapse Cards -->
+<div class="card collapsible">
+  <button class="collapsible-btn">📦Taobao хаяг холбох</button>
+  <div class="collapsible-content">
+    <p>Хаягаа холбоод чатаар заавал шалгуулаарай:</p>
+    <ul>
+      <li>Бүс нутаг: 内蒙古自治区 → 锡林郭勒盟 → 二连浩特市</li>
+      <li>Нарийн хаяг: Эрээн дэх хаяг YARMAG + өөрийн нэр + утас</li>
+      <li>Хятад утас: 15547926009</li>
+    </ul>
+  </div>
+</div>
+
+<div class="card collapsible">
+  <button class="collapsible-btn">📦Үнэ тариф</button>
+  <div class="collapsible-content">
+    <ul>
+      <li>Эрээн - УБ тээвэр: 1м² = 300,000-350,000₮</li>
+        <li>0-100гр г бараа: 1000₮</li>
+        <li>100гр-1000гр бараа: 2000₮</li>
+        <li>+1кг тутамд: 2500₮-с</li>
+        <li>Овор багатай хүнд ачааг жингээр тооцно, Овор ихтэй хөнгөн ачааг овроор тооцно.</li>
+    </ul>
+  </div>
+</div>
+
+
+<div class="card collapsible">
+  <button class="collapsible-btn">📦Хаяг байршил</button>
+  <div class="collapsible-content">
+    <ul>
+   <p>Яармаг Шүншиг вилла 2 хотхон 61а байр
+        ☎️ 86869035</p>
+    </ul>
+  </div>
+</div>
+
+
+<div class="card collapsible">
+  <button class="collapsible-btn">📦Анхаарах зүйлс</button>
+  <div class="collapsible-content">
+    <ul>
+   <li>Хориотой бараа тээвэрлэхгүй. Үүнд: Амархан муудах, хагарах, хөлдөх, шингэн зүйлс, тэсэрч дэлбэрэх бодис, амьд амьтан болон хил гаалийн тухай хуульд заасан бусад хориотой бараа
+</li>
+        <li>Тээвэрлэх хугацаа:  эрээнд хүлээж авсан төлөв орсон өдрөөс хойш 3-5 хоногт ирнэ.</li>
+    </ul>
+  </div>
+</div>
+
+
+<div class="card collapsible">
+  <button class="collapsible-btn">📦Заавар линкүүд</button>
+  <div class="collapsible-content">
+    <ul>
+           <li>Таобао: <a href="https://www.facebook.com/permalink.php/?story_fbid=122105328320975224&id=61579256729397" target="_blank">линк</a></li>
+        <li>Пиндуодуо: <a href="https://www.facebook.com/story.php?story_fbid=122099671676975224&id=61579256729397&mibextid=wwXIfr&rdid=shUINXwtOzTfIlVv&share_url=https%3A%2F%2Fwww.facebook.com%2Fshare%2Fp%2F14HVchWcwH5%2F%3Fmibextid%3DwwXIfr" target="_blank">линк</a></li>
+      
+    </ul>
+  </div>
+</div>
+</section>
+
+<!-- ADMIN -->
+<section id="adminPanel" class="card" hidden>
+<h2>🛠 Админ самбар</h2>
+<p class="lead">Нэвтрэх нууц: <code>admin123</code></p>
+<div id="adminLogin" style="margin-top:6px">
+<div class="row">
+<input id="adminPass" class="grow" placeholder="Нууц код" type="password"/>
+<button id="adminLoginBtn" class="primary">Нэвтрэх</button>
+</div>
+</div>
+<div id="adminArea" hidden style="margin-top:14px">
+<div style="margin-top:8px; display:flex; gap:8px; flex-wrap:wrap;">
+<input id="adminFilterPhone" placeholder="Утасны дугаар (шүүлт)" style="flex:1"/>
+<button id="adminFilterBtn" class="primary">🔍 Шүүх</button>
+<button id="adminFilterClearBtn">Цэвэрлэх</button>
+</div>
+
+<div class="card" style="padding:12px; margin-top:12px">
+<div class="row">
+<input id="aPhone" placeholder="Утасны дугаар"/>
+<input id="aTrack" placeholder="Трак код"/>
+</div>
+<div class="row" style="margin-top:8px">
+<input id="aPrice" placeholder="Үнэ (₮) — зөвхөн 'Монголд ирсэн' үед" inputmode="numeric"/>
+<input id="aQty" placeholder="Ширхэг" inputmode="numeric"/>
+<select id="aStatus" style="min-width:160px">
+<option value="эрээнд ирсэн">эрээнд ирсэн</option>
+<option value="Монголд ирсэн">Монголд ирсэн</option>
+<option value="хүлээж авсан">хүлээж авсан</option>
+</select>
+</div>
+<div class="row" style="margin-top:8px">
+<input id="aDate" type="date"/>
+<button id="addBtn" class="primary">➕ Нэмэх</button>
+<button id="clearBtn">Цэвэрлэх</button>
+<button id="exportBtn">Экспорт</button>
+<input id="importFile" type="file" accept="application/json" hidden/>
+<button id="importBtn">Импорт</button>
+</div>
+<div id="adminMsg" style="margin-top:8px" class="muted small"></div>
+</div>
+
+<div>
+<h3 style="margin:4px 0">Бүх бүртгэл</h3>
+<div id="allTableWrap" class="card" style="padding:8px"></div>
+</div>
+
+<div style="margin-top:12px">
+<h3 style="margin:4px 0">Хүлээж авсан илгээмж</h3>
+<div id="deliveredWrap" class="card" style="padding:8px"></div>
+</div>
+</div>
+</section>
+</main>
+
+<footer>
+<div class="container muted small">© <span id="yr"></span> Эрхэс Карго · Demo (localStorage)</div>
+</footer>
+
+<script>
+const KEY='cargo_demo_v3',PASS='admin123';
+const $=(s)=>document.querySelector(s);
+const fmt=new Intl.NumberFormat('mn-MN');
+
+function loadDB(){try{return JSON.parse(localStorage.getItem(KEY))||{}}catch{return{}}}
+function saveDB(db){localStorage.setItem(KEY,JSON.stringify(db))}
+function ensureDB(){saveDB(loadDB())}
+
+// Tabs
+const tabUser=$('#tabUser'),tabAdmin=$('#tabAdmin');
+const userPanel=$('#userPanel'),adminPanel=$('#adminPanel');
+tabUser.addEventListener('click',()=>{tabUser.classList.add('active');tabAdmin.classList.remove('active');userPanel.hidden=false;adminPanel.hidden=true})
+tabAdmin.addEventListener('click',()=>{tabAdmin.classList.add('active');tabUser.classList.remove('active');adminPanel.hidden=false;userPanel.hidden=true})
+
+// Collapse
+document.querySelectorAll('.clickable-row').forEach(c=>{
+c.addEventListener('click',()=>{c.querySelector('.collapse-content').classList.toggle('hidden')})
+c.addEventListener('touchstart',()=>{c.querySelector('.collapse-content').classList.toggle('hidden')})
+})
+
+// User search
+const uPhone=$('#uPhone'),uSearchBtn=$('#uSearchBtn');
+const userSummary=$('#userSummary'),userResults=$('#userResults');
+uSearchBtn.addEventListener('click',()=>{renderUser(uPhone.value.trim())})
+
+function renderUser(phone){
+userSummary.innerHTML='';userResults.innerHTML='';
+if(!phone) return;
+const db=loadDB();const items=(db[phone]||[]).slice();
+if(items.length===0){userResults.innerHTML='<div class="card muted small">Таны дугаарт илгээмж бүртгэгдээгүй байна.</div>';return;}
+const visible=items.filter(it=>it.status!=='хүлээж авсан');
+if(visible.length===0){userResults.innerHTML='<div class="card muted small">Таны дугаарт одоогоор харагдах илгээмж алга байна.</div>';return;}
+const totalQty=visible.reduce((s,x)=>s+Number(x.qty||0),0);
+const totalAmt=visible.reduce((s,x)=>s+(Number(x.qty||0)*Number(x.price||0)),0);
+userSummary.innerHTML=`<div class="card small muted">Нийт: <b>${totalQty}</b> ширхэг · Нийт дүн: <b>₮ ${fmt.format(totalAmt)}</b></div>`;
+const groups={};visible.forEach(i=>(groups[i.track]||=[]).push(i));
+const html=Object.keys(groups).sort().map(track=>{const arr=groups[track];const qty=arr.reduce((s,x)=>s+Number(x.qty||0),0);const amt=arr.reduce((s,x)=>s+Number(x.qty||0)*Number(x.price||0),0);const rows=arr.map(it=>`<tr><td>${it.track}</td><td>${it.qty}</td><td>${it.price?'₮ '+fmt.format(it.price):'-'}</td><td>${it.status}</td><td>${it.date}</td></tr>`).join('');return `<div class="card" style="padding:10px;margin-bottom:10px"><div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px"><div><b>Трак:</b> ${track}</div><div class="small muted">Дэд дүн: ₮ ${fmt.format(amt)} / ${qty} ширхэг</div></div><table><thead><tr><th>Трак</th><th>Ширхэг</th><th>Үнэ</th><th>Статус</th><th>Огноо</th></tr></thead><tbody>${rows}</tbody></table></div>`}).join('');
+userResults.innerHTML=html;
+}
+document.querySelectorAll('.collapsible-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    const content = btn.nextElementSibling;
+    if(content.style.maxHeight){
+      content.style.maxHeight = null; // хаах
+    } else {
+      content.style.maxHeight = content.scrollHeight + "px"; // нээх
+    }
+  });
+});
+
+// Admin login & actions
+const adminLoginBtn=$('#adminLoginBtn'),adminPass=$('#adminPass'),adminArea=$('#adminArea');
+const aPhone=$('#aPhone'),aTrack=$('#aTrack'),aPrice=$('#aPrice'),aQty=$('#aQty'),aStatus=$('#aStatus'),aDate=$('#aDate');
+const addBtn=$('#addBtn'),clearBtn=$('#clearBtn'),exportBtn=$('#exportBtn'),importBtn=$('#importBtn'),importFile=$('#importFile');
+const adminMsg=$('#adminMsg'),allTableWrap=$('#allTableWrap'),deliveredWrap=$('#deliveredWrap');
+const adminFilterPhone=$('#adminFilterPhone'),adminFilterBtn=$('#adminFilterBtn'),adminFilterClearBtn=$('#adminFilterClearBtn');
+let currentFilter='';
+
+function addItem({phone,track,price,qty,status,date}){
+if(!phone) return{ok:false,msg:'Утас шаардлагатай'};
+if(!track) return{ok:false,msg:'Трак код шаардлагатай'};
+if(!qty) return{ok:false,msg:'Ширхэг шаардлагатай'};
+if(!date) return{ok:false,msg:'Огноо шаардлагатай'};
+if(status==='Монголд ирсэн'&&(!price&&price!==0)) return{ok:false,msg:'Монголд ирсэн үед үнэ оруулна уу'};
+const db=loadDB();
+if(!db[phone]) db[phone]=[];
+const item={id:crypto.randomUUID?.()??('id_'+Date.now()),phone,track,price:Number(price)||0,qty:Number(qty)||1,status,date,createdAt:new Date().toISOString()};
+db[phone].push(item); saveDB(db); return{ok:true,item}
+}
+
+function deleteItem(phone,id){const db=loadDB();if(!db[phone])return;db[phone]=db[phone].filter(x=>x.id!==id);if(db[phone].length===0) delete db[phone];saveDB(db)}
+function updateItem(phone,id,patch){const db=loadDB();const arr=db[phone]||[];const i=arr.findIndex(x=>x.id===id);if(i>-1){arr[i]={...arr[i],...patch};saveDB(db);return true}return false}
+
+function renderAll(){
+const db=loadDB();const rows=[];
+Object.keys(db).sort().forEach(phone=>{
+if(currentFilter && !phone.includes(currentFilter)) return;
+db[phone].forEach(it=>{
+rows.push(`<tr>
+<td>${phone}</td><td>${it.track}</td><td>₮ ${fmt.format(it.price||0)}</td><td>${it.qty}</td><td>${it.status}</td><td>${it.date}</td>
+<td><button data-act="edit" data-phone="${phone}" data-id="${it.id}">✏️</button>
+<button data-act="del" data-phone="${phone}" data-id="${it.id}">🗑️</button>
+<button data-act="mark" data-phone="${phone}" data-id="${it.id}">${it.status==='хүлээж авсан'?'↺ Буцаах':'✔ Хүлээж авсан'}</button></td></tr>`);})
+});
+if(rows.length===0){allTableWrap.innerHTML='<div class="muted small">Бүртгэл олдсонгүй</div>';return;}
+allTableWrap.innerHTML=`<table><thead><tr><th>Утас</th><th>Трак</th><th>Үнэ</th><th>Ширхэг</th><th>Статус</th><th>Огноо</th><th>Үйлдэл</th></tr></thead><tbody id="allBody">${rows.join('')}</tbody></table>`;
+document.getElementById('allBody').addEventListener('click',(e)=>{const btn=e.target.closest('button');if(!btn)return;const act=btn.dataset.act,phone=btn.dataset.phone,id=btn.dataset.id;if(act==='del'){if(confirm('Устгах уу?')){deleteItem(phone,id);renderAll();renderDelivered()}};if(act==='edit'){const db=loadDB();const it=(db[phone]||[]).find(x=>x.id===id);if(!it)return;const newPrice=prompt('Үнэ (₮)',it.price)??it.price;const newQty=prompt('Ширхэг',it.qty)??it.qty;const newStatus=prompt('Статус (эрээнд ирсэн/Монголд ирсэн/хүлээж авсан)',it.status)??it.status;const newDate=prompt('Огноо',it.date)??it.date;updateItem(phone,id,{price:Number(newPrice)||0,qty:Number(newQty)||1,status:newStatus,date:newDate});renderAll();renderDelivered()};if(act==='mark'){const db=loadDB();const it=(db[phone]||[]).find(x=>x.id===id);if(!it)return;updateItem(phone,id,{status:it.status==='хүлээж авсан'?'эрээнд ирсэн':'хүлээж авсан'});renderAll();renderDelivered()}})}
+function renderDelivered(){
+const db=loadDB();const rows=[];
+Object.keys(db).forEach(phone=>db[phone].filter(x=>x.status==='хүлээж авсан').forEach(it=>{
+rows.push(`<div class="card small" style="padding:6px;margin-bottom:4px">Утас: ${phone}, Трак: ${it.track}, Огноо: ${it.date}</div>`)}))
+if(rows.length===0){deliveredWrap.innerHTML='<div class="muted small">Хүлээж авсан илгээмж алга</div>';return;}
+deliveredWrap.innerHTML=rows.join('')
+}
+
+// Events
+adminLoginBtn.addEventListener('click',()=>{if(adminPass.value===PASS){adminArea.hidden=false;adminLogin.hidden=true;adminMsg.textContent='Нэвтэрлээ';renderAll();renderDelivered()}else{adminMsg.textContent='Нууц буруу'}})
+
+addBtn.addEventListener('click',()=>{
+const r=addItem({phone:aPhone.value.trim(),track:aTrack.value.trim(),price:aPrice.value.trim(),qty:aQty.value.trim(),status:aStatus.value, date:aDate.value});adminMsg.textContent=r.msg||'';if(r.ok){renderAll();renderDelivered()}})
+clearBtn.addEventListener('click',()=>{aPhone.value='';aTrack.value='';aPrice.value='';aQty.value='';aDate.value='';aStatus.value='эрээнд ирсэн'})
+exportBtn.addEventListener('click',()=>{const blob=new Blob([JSON.stringify(loadDB(),null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='cargo_db.json';a.click();URL.revokeObjectURL(url)})
+importBtn.addEventListener('click',()=>{importFile.click()})
+importFile.addEventListener('change',()=>{const f=importFile.files[0];if(!f)return;const reader=new FileReader();reader.onload=e=>{try{const obj=JSON.parse(e.target.result);saveDB(obj);renderAll();renderDelivered();alert('Импорт амжилттай')}catch(err){alert('Файл буруу')}};reader.readAsText(f)})
+
+adminFilterBtn.addEventListener('click',()=>{currentFilter=adminFilterPhone.value.trim();renderAll()})
+adminFilterClearBtn.addEventListener('click',()=>{adminFilterPhone.value='';currentFilter='';renderAll()})
+
+document.getElementById('yr').textContent=new Date().getFullYear();
+ensureDB();
+</script>
+</body>
+</html>
